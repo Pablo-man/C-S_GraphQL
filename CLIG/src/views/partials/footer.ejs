@@ -1,0 +1,53 @@
+<script>
+
+    document.getElementById('editForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const id = document.getElementById('id').value;
+        const title = document.getElementById('title').value;
+        const albun = document.getElementById('albun').value;
+        updateSong(id, title, albun)
+    })
+
+    document.getElementById('createForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const title = document.getElementById('title').value;
+        const albun = document.getElementById('albun').value;
+        createSong(title, albun);
+    })
+
+    async function updateSong(id, title, albun) {
+        const response = await fetch(`http://localhost:8080/rest/songs/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, albun })
+        });
+        window.location.href = '/cli'
+    }
+
+    async function deleteSong(id) {
+        const response = await fetch(`http://localhost:8080/rest/songs/${id}`, {
+            method: 'DELETE'
+        });
+        window.location.href = '/cli'
+    }
+
+    async function createSong(title, albun) {
+        const mutation= `
+        mutation{
+            register(
+                title: "${title}", 
+                albun: "${albun}")
+        }`;
+        const response = await fetch('http://localhost:8080/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query: mutation })
+        });
+        window.location.href = '/cli';
+    }
+
+</script>
